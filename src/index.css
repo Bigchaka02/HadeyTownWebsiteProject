@@ -1,0 +1,36 @@
+/* ============================
+   index.css — global styles
+   ============================ */
+
+/* Root / no scrollbars */
+* { box-sizing: border-box; }
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;        /* prevent stray scrollbars */
+  background: #0f0f10;
+}
+
+/* Helpful scene utilities (unused classes are harmless) */
+.scene-outer { position: absolute; inset: 0; display: grid; place-items: center; }
+.scene-inner { position: absolute; transform-origin: top left; }
+.scene-stack { position: relative; user-select: none; }
+
+/* Pixel crispness */
+.pixel-image, .sprite {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.pixel-layer { will-change: transform; }
+
+/* Generic spritesheet animation (used by <Sprite/>) */
+@keyframes sprite-steps {
+  to { background-position: var(--bg-end-x, 0px) var(--bg-end-y, 0px); }
+}
+.sprite {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  animation: sprite-steps var(--duration, 1s) steps(var(--frames, 1)) infinite;
+}
