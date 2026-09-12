@@ -28,7 +28,7 @@ npm run preview   # serve the production build
 | `src/components/Scene.tsx` | The map, the ambient animations (smoke, trees, bird, cat) and the character. |
 | `src/components/Character.tsx` | The walking character: follows a route node to node and animates its sprite. |
 | `src/components/Dialog.tsx` | The RPG-style window a page opens in. |
-| `src/assets/character.png` | The character sprite sheet — 16×24 frames, 4 walk frames × 4 directions (down, up, left, right). |
+| `src/assets/character.png` | The character sprite sheet — 18×32 frames; each row is a facing (down, up, left, right), each column a walk-cycle frame (stand, step, stand, other step). |
 
 ## Adding a building
 
@@ -45,5 +45,6 @@ publishes `dist/` to GitHub Pages. The first time, enable it once under
 
 ## Credits
 
-Map and animation art from the "full house animation" tileset in `src/assets/`;
-the character sprite was drawn for this site.
+Map and animation art from the "full house animation" tileset in `src/assets/`.
+The character is Hadey's own sprite (the left-facing frames are mirrored from the
+right-facing ones, and the down/up walk cycles were completed from the provided poses).

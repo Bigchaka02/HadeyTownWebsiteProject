@@ -2,11 +2,11 @@ import { useEffect, useImperativeHandle, useRef, type Ref, type RefObject } from
 import sheet from "../assets/character.png";
 import type { Dir, NodeId, Point, Waypoint } from "../town";
 
-// character.png: 16x24 frames. Columns = walk cycle (idle, step, idle, step), rows = facing.
-const FRAME_W = 16;
-const FRAME_H = 24;
-const FEET_Y = 22; // baseline of the feet inside a frame
-const STEP_PX = 7; // world px travelled per walk-cycle frame
+// character.png: 18x32 frames. Columns = walk cycle (stand, step, stand, other step), rows = facing.
+const FRAME_W = 18;
+const FRAME_H = 32;
+const FEET_Y = 30; // baseline of the feet inside a frame
+const STEP_PX = 8; // world px travelled per walk-cycle frame
 
 const ROW: Record<Dir, number> = { down: 0, up: 1, left: 2, right: 3 };
 
