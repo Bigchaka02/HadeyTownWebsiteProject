@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 type SpriteProps = {
   src: string;
   frameWidth: number;   // width of one frame in pixels
@@ -23,26 +25,18 @@ export default function Sprite({
   const endX = orientation === "horizontal" ? `-${frameWidth * frames}px` : "0px";
   const endY = orientation === "vertical" ? `-${frameHeight * frames}px` : "0px";
 
-  return (
-    <div
-      className="sprite"
-      style={{
-        left: x,
-        top: y,
-        width: frameWidth,
-        height: frameHeight,
-        backgroundImage: `url(${src})`,
-        // CSS vars consumed by @keyframes sprite-steps in index.css
-        // @ts-ignore
-        "--bg-end-x": endX,
-        // @ts-ignore
-        "--bg-end-y": endY,
-        // @ts-ignore
-        "--frames": frames,
-        // @ts-ignore
-        "--duration": duration,
-      } as React.CSSProperties}
-      aria-hidden
-    />
-  );
+  // CSS vars are consumed by @keyframes sprite-steps in index.css
+  const style = {
+    left: x,
+    top: y,
+    width: frameWidth,
+    height: frameHeight,
+    backgroundImage: `url(${src})`,
+    "--bg-end-x": endX,
+    "--bg-end-y": endY,
+    "--frames": frames,
+    "--duration": duration,
+  } as CSSProperties;
+
+  return <div className="sprite" style={style} aria-hidden />;
 }
