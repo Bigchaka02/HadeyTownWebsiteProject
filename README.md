@@ -1,73 +1,49 @@
-# React + TypeScript + Vite
+# Hadey Town
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+My personal website, built like a tiny top-down game. Click a building (or use the
+buttons in the header) and the character walks over and opens it:
 
-Currently, two official plugins are available:
+- **About Me** — the big house
+- **Projects** — the small house by the road
+- **Resume** — the clock tower
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Live site: https://bigchaka02.github.io/HadeyTownWebsiteProject/
+(direct links work too: `/#about`, `/#projects`, `/#resume`)
 
-## React Compiler
+## Running it locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev       # http://localhost:5173/HadeyTownWebsiteProject/
+npm run build     # production build in dist/
+npm run preview   # serve the production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Where things live
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| File | What it is |
+| --- | --- |
+| `src/content.tsx` | Everything written on the pages: bio, projects, experience, skills, contact links. Edit this to update the site. |
+| `src/town.ts` | The buildings (clickable areas, name signs, sprites) and the road network the character walks on. Coordinates are Tiled world pixels of `ExteriorMap.png`. |
+| `src/components/Scene.tsx` | The map, the ambient animations (smoke, trees, bird, cat) and the character. |
+| `src/components/Character.tsx` | The walking character: follows a route node to node and animates its sprite. |
+| `src/components/Dialog.tsx` | The RPG-style window a page opens in. |
+| `src/assets/character.png` | The character sprite sheet — 16×24 frames, 4 walk frames × 4 directions (down, up, left, right). |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Adding a building
+
+1. Drop its image in `src/assets/…` and add an entry to `BUILDINGS` in `src/town.ts`
+   (position, clickable `hitbox`, `sign` position and which `door` node to walk to).
+2. Add the door as a node in `NODES` and connect it to the road in `EDGES`.
+3. Add the page's title and content to `PAGES` in `src/content.tsx`.
+
+## Deploying
+
+Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site and
+publishes `dist/` to GitHub Pages. The first time, enable it once under
+**Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+## Credits
+
+Map and animation art from the "full house animation" tileset in `src/assets/`;
+the character sprite was drawn for this site.

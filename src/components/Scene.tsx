@@ -22,6 +22,13 @@ type Props = {
 // The character walks in from off-map on load.
 const ENTRANCE = { id: "start" as const, x: 200, y: 396 };
 
+// Parts of the map drawn in front of the character: the two tree canopies that
+// hang over the road (world px; each is clipped to an ellipse in CSS).
+const FOREGROUND = [
+  { x: 326, y: 368, w: 50, h: 50 }, // round tree left of the garden gate
+  { x: 529, y: 371, w: 60, h: 59 }, // apple tree right of the gate
+];
+
 export default function Scene({ visit, onSelect, onArrive }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const character = useRef<CharacterHandle>(null);
@@ -68,7 +75,7 @@ export default function Scene({ visit, onSelect, onArrive }: Props) {
     if (!crop || !el) return;
     const fit = () => {
       const s = Math.min(el.clientWidth / crop.w, el.clientHeight / crop.h);
-      setScale(Math.max(0.5, Math.floor(s * 4) / 4)); // quarter steps keep pixels tidy
+      setScale(Math.max(0.5, Math.floor(s * 8) / 8)); // snap to 1/8 steps so pixels stay tidy
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -126,6 +133,21 @@ export default function Scene({ visit, onSelect, onArrive }: Props) {
             ))}
 
             <Character ref={character} at={ENTRANCE} />
+
+            {FOREGROUND.map((f) => (
+              <div
+                key={f.x}
+                className="foreground"
+                style={{
+                  left: f.x,
+                  top: f.y,
+                  width: f.w,
+                  height: f.h,
+                  backgroundImage: `url(${rawMap})`,
+                  backgroundPosition: `${-f.x}px ${-f.y}px`,
+                }}
+              />
+            ))}
           </div>
 
           {/* Signs are drawn in screen pixels so the text stays crisp at any zoom. */}
