@@ -12,7 +12,6 @@
   --wood: #3b2a1e;
   --wood-2: #5a3a26;
   --roof: #c8452b;
-  --sky: #3d7ab8;
   --link: #2c5b8f;
 
   --font-pixel: "Press Start 2P", "Courier New", monospace;
@@ -42,10 +41,6 @@ body {
 #root {
   display: flex;
   flex-direction: column;
-}
-
-a {
-  color: inherit;
 }
 
 /* ---------- HUD ---------- */
@@ -159,17 +154,14 @@ a {
 .sprite {
   position: absolute;
   image-rendering: pixelated;
-  image-rendering: crisp-edges;
 }
 
 .map-img {
   left: 0;
   top: 0;
-  display: block;
 }
 
 .building-img {
-  display: block;
   transition: filter 0.15s;
 }
 
@@ -181,7 +173,6 @@ a {
 .hotspot {
   position: absolute;
   padding: 0;
-  margin: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -384,11 +375,11 @@ a {
   margin-bottom: 4px;
 }
 
-.tags {
+.dialog-body .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  margin: 8px 0 0 !important;
+  margin: 8px 0 0;
 }
 
 .tag {
@@ -470,7 +461,7 @@ a {
 }
 
 .stats .tags {
-  margin-top: 0 !important;
+  margin-top: 0;
 }
 
 /* ---------- Small screens ---------- */

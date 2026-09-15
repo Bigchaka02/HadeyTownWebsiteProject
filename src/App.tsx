@@ -9,12 +9,10 @@ const isPage = (s: string): s is PageId => BUILDINGS.some((b) => b.id === s);
 export default function App() {
   const [page, setPage] = useState<PageId | null>(null); // dialog currently open
   const [visit, setVisit] = useState<{ id: PageId; n: number } | null>(null); // where the character should go
-  const [hintShown, setHintShown] = useState(true);
 
   // Send the character to a building; the page opens when it gets there.
   const go = useCallback((id: PageId) => {
     setPage(null);
-    setHintShown(false);
     setVisit((v) => ({ id, n: (v?.n ?? 0) + 1 }));
   }, []);
 
@@ -57,7 +55,7 @@ export default function App() {
 
       <Scene visit={visit} onSelect={go} onArrive={open} />
 
-      <footer className="hud-foot" data-visible={hintShown}>
+      <footer className="hud-foot" data-visible={visit === null}>
         ▸ Click a building and I’ll walk over
       </footer>
 

@@ -1,7 +1,5 @@
 // Town layout: buildings, the paths the character can walk on, and route finding.
 // All coordinates are Tiled "world" pixels of ExteriorMap.png (768x512).
-// Scene.tsx crops the transparent margins off the map and shifts the overlay,
-// so everything here can stay in world coordinates.
 
 import monkHouse from "./assets/full_house_animation/PNG/monk_house.png";
 import clockTower from "./assets/full_house_animation/PNG/clock_tower.png";
@@ -9,6 +7,9 @@ import clockTower from "./assets/full_house_animation/PNG/clock_tower.png";
 export type Point = { x: number; y: number };
 export type Dir = "down" | "up" | "left" | "right";
 export type PageId = "about" | "projects" | "resume";
+
+// The part of the map image that is actually drawn (the Tiled export has transparent margins).
+export const MAP_VIEW = { x: 224, y: 154, w: 432, h: 296 };
 
 // ---- Walkable graph -------------------------------------------------------
 // Nodes sit on the cobblestone roads. The character only ever walks node to node.

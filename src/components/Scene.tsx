@@ -2,16 +2,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Sprite from "./Sprite";
 import Character, { type CharacterHandle } from "./Character";
 import BuildingView from "./Building";
-import { BUILDINGS, buildingById, findRoute, type PageId } from "../town";
+import { BUILDINGS, MAP_VIEW, NODES, buildingById, findRoute, type PageId } from "../town";
 
 import rawMap from "../assets/full_house_animation/PNG/ExteriorMap.png";
 import smokeSheet from "../assets/full_house_animation/PNG/Smoke_animation.png";
 import treesSheet from "../assets/full_house_animation/PNG/Trees_animation.png";
 import birdSheet from "../assets/full_house_animation/PNG/bird_fly_animation.png";
 import catSheet from "../assets/full_house_animation/PNG/cat_animation.png";
-
-// Opaque bounds of the map image (the Tiled export has transparent margins).
-type Crop = { x: number; y: number; w: number; h: number };
 
 type Props = {
   visit: { id: PageId; n: number } | null; // request to walk to a building
@@ -32,63 +29,28 @@ const FOREGROUND = [
 export default function Scene({ visit, onSelect, onArrive }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const character = useRef<CharacterHandle>(null);
-  const [crop, setCrop] = useState<Crop | null>(null);
   const [scale, setScale] = useState(1);
   const [hovered, setHovered] = useState<PageId | null>(null);
-  const [destination, setDestination] = useState<PageId | null>(null);
 
-  // ---- 1) Find the opaque bounds of the map once ----
-  useEffect(() => {
-    const img = new Image();
-    img.src = rawMap;
-    img.onload = () => {
-      const w = img.naturalWidth;
-      const h = img.naturalHeight;
-      const c = document.createElement("canvas");
-      c.width = w;
-      c.height = h;
-      const ctx = c.getContext("2d", { willReadFrequently: true })!;
-      ctx.drawImage(img, 0, 0);
-      const { data } = ctx.getImageData(0, 0, w, h);
-
-      let minX = w, minY = h, maxX = -1, maxY = -1;
-      const THRESH = 8; // alpha threshold
-      for (let y = 0; y < h; y++) {
-        const row = y * w * 4;
-        for (let x = 0; x < w; x++) {
-          if (data[row + x * 4 + 3] > THRESH) {
-            if (x < minX) minX = x;
-            if (y < minY) minY = y;
-            if (x > maxX) maxX = x;
-            if (y > maxY) maxY = y;
-          }
-        }
-      }
-      if (maxX < 0) setCrop({ x: 0, y: 0, w, h });
-      else setCrop({ x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 });
-    };
-  }, []);
-
-  // ---- 2) Fit the cropped map into the available space ----
+  // Fit the map into the available space (1/8 steps keep the pixels tidy).
   useLayoutEffect(() => {
-    const el = container.current;
-    if (!crop || !el) return;
+    const el = container.current!;
     const fit = () => {
-      const s = Math.min(el.clientWidth / crop.w, el.clientHeight / crop.h);
-      setScale(Math.max(0.5, Math.floor(s * 8) / 8)); // snap to 1/8 steps so pixels stay tidy
+      const s = Math.min(el.clientWidth / MAP_VIEW.w, el.clientHeight / MAP_VIEW.h);
+      setScale(Math.max(0.5, Math.floor(s * 8) / 8));
     };
     fit();
     const ro = new ResizeObserver(fit);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [crop]);
+  }, []);
 
-  // ---- 3) Walk in from the edge of town once the map is ready ----
+  // Walk in from the edge of town on load.
   useEffect(() => {
-    character.current?.walk(findRoute(ENTRANCE, ["start"], "start"));
-  }, [crop]);
+    character.current?.walk([{ id: "start", ...NODES.start }]);
+  }, []);
 
-  // ---- 4) Walk to a building when asked (map click or HUD button) ----
+  // Walk to a building when asked (map click or header button).
   const arrive = useRef(onArrive);
   useEffect(() => {
     arrive.current = onArrive;
@@ -96,25 +58,18 @@ export default function Scene({ visit, onSelect, onArrive }: Props) {
   useEffect(() => {
     const c = character.current;
     if (!visit || !c) return;
-    const b = buildingById(visit.id);
+    const { door } = buildingById(visit.id);
     const { pos, nodes, walking } = c.location();
-    setDestination(visit.id);
-    if (!walking && nodes[0] === b.door) {
-      arrive.current(visit.id); // already standing at the door
-      return;
-    }
-    c.walk(findRoute(pos, nodes, b.door), () => arrive.current(visit.id));
-  }, [visit, crop]);
+    if (!walking && nodes[0] === door) return arrive.current(visit.id); // already at the door
+    c.walk(findRoute(pos, nodes, door), () => arrive.current(visit.id));
+  }, [visit]);
 
+  const { x: vx, y: vy, w, h } = MAP_VIEW;
   return (
     <div ref={container} className="scene">
-      {crop && (
-        <div className="map" style={{ width: crop.w * scale, height: crop.h * scale }}>
-          {/* Everything inside .world uses Tiled world pixels; the transform crops + scales it. */}
-          <div
-            className="world"
-            style={{ transform: `scale(${scale}) translate(${-crop.x}px, ${-crop.y}px)` }}
-          >
+      <div className="map" style={{ width: w * scale, height: h * scale }}>
+        {/* Everything inside .world uses Tiled world pixels; the transform crops + scales it. */}
+        <div className="world" style={{ transform: `scale(${scale}) translate(${-vx}px, ${-vy}px)` }}>
             <img className="map-img" src={rawMap} alt="" draggable={false} />
 
             {/* Ambient animations. Positions are world pixels. */}
@@ -156,15 +111,14 @@ export default function Scene({ visit, onSelect, onArrive }: Props) {
               <span
                 key={b.id}
                 className="sign"
-                data-active={hovered === b.id || destination === b.id}
-                style={{ left: (b.sign.x - crop.x) * scale, top: (b.sign.y - crop.y) * scale }}
+                data-active={hovered === b.id || visit?.id === b.id}
+                style={{ left: (b.sign.x - vx) * scale, top: (b.sign.y - vy) * scale }}
               >
                 {b.label}
               </span>
             ))}
           </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

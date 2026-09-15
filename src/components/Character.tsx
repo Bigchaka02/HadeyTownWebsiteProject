@@ -7,6 +7,7 @@ const FRAME_W = 18;
 const FRAME_H = 32;
 const FEET_Y = 30; // baseline of the feet inside a frame
 const STEP_PX = 8; // world px travelled per walk-cycle frame
+const SPEED = 72; // world px per second
 
 const ROW: Record<Dir, number> = { down: 0, up: 1, left: 2, right: 3 };
 
@@ -20,7 +21,6 @@ export type CharacterHandle = {
 type Props = {
   ref: Ref<CharacterHandle>;
   at: Waypoint; // initial position (may be off-map: the node id is where it will head first)
-  speed?: number; // world px per second (read once, on mount)
 };
 
 const dirOf = (from: Point, to: Point): Dir => {
@@ -32,7 +32,7 @@ const dirOf = (from: Point, to: Point): Dir => {
 
 // The walking state machine. It lives outside React's render cycle: position and
 // animation frame are written straight to the DOM node each animation frame.
-function createWalker(at: Waypoint, speed: number, el: RefObject<HTMLDivElement | null>) {
+function createWalker(at: Waypoint, el: RefObject<HTMLDivElement | null>) {
   let pos: Point = { x: at.x, y: at.y };
   let from: NodeId = at.id; // last node reached
   let route: Waypoint[] = [];
@@ -64,9 +64,9 @@ function createWalker(at: Waypoint, speed: number, el: RefObject<HTMLDivElement 
   };
 
   const tick = (t: number) => {
-    let step = ((t - last) / 1000) * speed;
+    let step = ((t - last) / 1000) * SPEED;
     last = t;
-    if (step > speed / 10) step = speed / 10; // tab was hidden: don't teleport
+    if (step > SPEED / 10) step = SPEED / 10; // tab was hidden: don't teleport
 
     while (step > 0 && next < route.length) {
       const target = route[next];
@@ -123,10 +123,10 @@ function createWalker(at: Waypoint, speed: number, el: RefObject<HTMLDivElement 
   };
 }
 
-export default function Character({ ref, at, speed = 72 }: Props) {
+export default function Character({ ref, at }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const walker = useRef<ReturnType<typeof createWalker>>(null);
-  if (walker.current === null) walker.current = createWalker(at, speed, el);
+  if (walker.current === null) walker.current = createWalker(at, el);
 
   // Pause the animation loop while unmounted (StrictMode remounts in dev) and pick it back up.
   useEffect(() => {
