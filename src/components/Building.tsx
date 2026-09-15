@@ -2,13 +2,13 @@ import type { Building } from "../town";
 
 type Props = {
   building: Building;
+  active: boolean; // the character is heading here (or standing here)
   onClick: () => void;
-  onHover: (hovering: boolean) => void;
 };
 
-// A building on the map: an optional image drawn over the map plus an invisible
-// button covering the clickable area. Positions are in world pixels (see town.ts).
-export default function BuildingView({ building: b, onClick, onHover }: Props) {
+// A building on the map: an optional image drawn over the map, an invisible button
+// covering the clickable area, and its name sign. Positions are world pixels (town.ts).
+export default function BuildingView({ building: b, active, onClick }: Props) {
   return (
     <div className="building">
       {b.sprite && (
@@ -26,11 +26,10 @@ export default function BuildingView({ building: b, onClick, onHover }: Props) {
         aria-label={`Walk to ${b.label}`}
         style={{ left: b.hitbox.x, top: b.hitbox.y, width: b.hitbox.w, height: b.hitbox.h }}
         onClick={onClick}
-        onMouseEnter={() => onHover(true)}
-        onMouseLeave={() => onHover(false)}
-        onFocus={() => onHover(true)}
-        onBlur={() => onHover(false)}
       />
+      <span className="sign" data-active={active} style={{ left: b.sign.x, top: b.sign.y }}>
+        {b.label}
+      </span>
     </div>
   );
 }

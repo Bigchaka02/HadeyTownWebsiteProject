@@ -170,6 +170,30 @@ body {
   filter: brightness(1.18) drop-shadow(0 0 1px rgba(255, 250, 200, 0.9));
 }
 
+/* Name sign: sized in screen pixels (undoes the world scale) so the text stays crisp. */
+.sign {
+  position: absolute;
+  z-index: 5;
+  transform: translate(-50%, -50%) scale(calc(1 / var(--scale, 1)));
+  padding: 6px 8px;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--paper);
+  background: var(--wood);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 2px var(--wood), 2px 2px 0 2px rgba(0, 0, 0, 0.35);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.building:has(.hotspot:hover) .sign,
+.building:has(.hotspot:focus-visible) .sign,
+.sign[data-active="true"] {
+  background: var(--roof);
+  transform: translate(-50%, -50%) scale(calc(1.15 / var(--scale, 1)));
+}
+
 .hotspot {
   position: absolute;
   padding: 0;
@@ -209,33 +233,6 @@ body {
   background-repeat: no-repeat;
   background-position: 0 0;
   animation: sprite-steps var(--duration, 1s) steps(var(--frames, 1)) infinite;
-}
-
-/* Name signs, in screen pixels (outside the scaled world) */
-.signs {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.sign {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  padding: 6px 8px;
-  font-family: var(--font-pixel);
-  font-size: 8px;
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--paper);
-  background: var(--wood);
-  border: 2px solid var(--paper);
-  box-shadow: 0 0 0 2px var(--wood), 2px 2px 0 2px rgba(0, 0, 0, 0.35);
-  transition: background 0.15s, transform 0.15s;
-}
-
-.sign[data-active="true"] {
-  background: var(--roof);
-  transform: translate(-50%, -50%) scale(1.15);
 }
 
 /* ---------- Dialog ---------- */

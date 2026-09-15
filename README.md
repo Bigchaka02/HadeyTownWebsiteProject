@@ -26,7 +26,8 @@ npm run preview   # serve the production build
 | `src/content.tsx` | Everything written on the pages: bio, projects, experience, skills, contact links. Edit this to update the site. |
 | `src/town.ts` | Everything that is *in* the town: the map, the ambient animations (smoke, trees, bird, cat), the buildings (clickable areas, name signs, sprites) and the road network the character walks on. Coordinates are Tiled world pixels of `ExteriorMap.png`. |
 | `src/components/Scene.tsx` | Renders the town and drives the character to whichever building was picked. |
-| `src/components/Character.tsx` | The walking character: follows a route node to node and animates its sprite. |
+| `src/walker.ts` | The walking logic: follows a route node to node, animates the sprite, and reports where the character is. |
+| `src/components/Character.tsx` | The character's sprite element (the walker drives it). |
 | `src/components/Dialog.tsx` | The RPG-style window a page opens in. |
 | `src/assets/character.png` | The character sprite sheet — 18×32 frames; each row is a facing (down, up, left, right), each column a walk-cycle frame (stand, step, stand, other step). |
 

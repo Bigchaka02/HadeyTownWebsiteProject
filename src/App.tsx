@@ -26,10 +26,15 @@ export default function App() {
     history.replaceState(null, "", location.pathname + location.search);
   }, []);
 
-  // Deep links: /#about, /#projects, /#resume
+  // Deep links: /#about, /#projects, /#resume (on load and whenever the hash is edited).
   useEffect(() => {
-    const hash = location.hash.slice(1);
-    if (isPage(hash)) go(hash);
+    const sync = () => {
+      const id = location.hash.slice(1);
+      if (isPage(id)) go(id);
+    };
+    sync();
+    addEventListener("hashchange", sync);
+    return () => removeEventListener("hashchange", sync);
   }, [go]);
 
   return (
