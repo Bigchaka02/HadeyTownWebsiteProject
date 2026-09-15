@@ -1,7 +1,7 @@
 // Everything written on the site lives here. Edit freely — the map and the
 // character don't care what the pages say.
 import type { ReactNode } from "react";
-import Tags from "./components/Tags";
+import { Ext, Tags } from "./components/bits";
 import type { PageId } from "./town";
 
 export const SITE = {
@@ -97,6 +97,15 @@ const experience: Job[] = [
   },
 ];
 
+// The "character sheet" on the About page.
+const facts: [string, string][] = [
+  ["Class", "Full-Stack Developer"],
+  ["Guild", "University of Louisville · B.S. Computer Science & Engineering"],
+  ["Home base", "Louisville, KY"],
+  ["Current quest", "Finishing my degree and looking for software engineering roles"],
+  ["Favourite loot", "Embedded gadgets, web apps, anything with blinking lights"],
+];
+
 const skills: Record<string, string[]> = {
   Frontend: ["React", "Next.js", "TypeScript", "Tailwind", "Vue.js"],
   Backend: ["Node.js", "Express", "Fastify", "Prisma", "GraphQL"],
@@ -119,16 +128,12 @@ export const PAGES: Record<PageId, { title: string; body: ReactNode }> = {
 
         <h3>Character sheet</h3>
         <dl className="stats">
-          <dt>Class</dt>
-          <dd>Full-Stack Developer</dd>
-          <dt>Guild</dt>
-          <dd>University of Louisville · B.S. Computer Science &amp; Engineering</dd>
-          <dt>Home base</dt>
-          <dd>Louisville, KY</dd>
-          <dt>Current quest</dt>
-          <dd>Finishing my degree and looking for software engineering roles</dd>
-          <dt>Favourite loot</dt>
-          <dd>Embedded gadgets, web apps, anything with blinking lights</dd>
+          {facts.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
         </dl>
 
         <h3>Contact</h3>
@@ -137,10 +142,7 @@ export const PAGES: Record<PageId, { title: string; body: ReactNode }> = {
             Email: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
           </li>
           <li>
-            GitHub:{" "}
-            <a href={SITE.github} target="_blank" rel="noopener noreferrer">
-              github.com/Bigchaka02
-            </a>
+            GitHub: <Ext href={SITE.github}>github.com/Bigchaka02</Ext>
           </li>
         </ul>
 
@@ -159,15 +161,7 @@ export const PAGES: Record<PageId, { title: string; body: ReactNode }> = {
         <div className="cards">
           {projects.map((p) => (
             <article key={p.title} className="card">
-              <h3>
-                {p.link ? (
-                  <a href={p.link} target="_blank" rel="noopener noreferrer">
-                    {p.title} ↗
-                  </a>
-                ) : (
-                  p.title
-                )}
-              </h3>
+              <h3>{p.link ? <Ext href={p.link}>{p.title} ↗</Ext> : p.title}</h3>
               {p.when && <p className="when">{p.when}</p>}
               <p>{p.blurb}</p>
               <Tags tags={p.tags} />
@@ -175,11 +169,7 @@ export const PAGES: Record<PageId, { title: string; body: ReactNode }> = {
           ))}
         </div>
         <p className="hint">
-          More on{" "}
-          <a href={SITE.github} target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-          .
+          More on <Ext href={SITE.github}>GitHub</Ext>.
         </p>
       </>
     ),

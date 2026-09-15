@@ -1,15 +1,49 @@
 // Town layout: buildings, the paths the character can walk on, and route finding.
 // All coordinates are Tiled "world" pixels of ExteriorMap.png (768x512).
 
+import mapImage from "./assets/full_house_animation/PNG/ExteriorMap.png";
 import monkHouse from "./assets/full_house_animation/PNG/monk_house.png";
 import clockTower from "./assets/full_house_animation/PNG/clock_tower.png";
+import smokeSheet from "./assets/full_house_animation/PNG/Smoke_animation.png";
+import treesSheet from "./assets/full_house_animation/PNG/Trees_animation.png";
+import birdSheet from "./assets/full_house_animation/PNG/bird_fly_animation.png";
+import catSheet from "./assets/full_house_animation/PNG/cat_animation.png";
 
 export type Point = { x: number; y: number };
 export type Dir = "down" | "up" | "left" | "right";
 export type PageId = "about" | "projects" | "resume";
 
+// ---- Map ----------------------------------------------------------------
+export const MAP_IMAGE = mapImage;
+
 // The part of the map image that is actually drawn (the Tiled export has transparent margins).
 export const MAP_VIEW = { x: 224, y: 154, w: 432, h: 296 };
+
+// Looping sprite-sheet animations painted over the map (frame size, count and speed per sheet).
+export type Animation = {
+  src: string;
+  frameWidth: number;
+  frameHeight: number;
+  frames: number;
+  fps?: number;
+  x: number;
+  y: number;
+  orientation?: "horizontal" | "vertical"; // how the frames are laid out in the sheet
+};
+
+export const AMBIENT: Animation[] = [
+  { src: smokeSheet, frameWidth: 48, frameHeight: 48, frames: 6, fps: 4, x: 368, y: 160, orientation: "horizontal" },
+  { src: treesSheet, frameWidth: 64, frameHeight: 80, frames: 13, fps: 5, x: 512, y: 175 },
+  { src: birdSheet, frameWidth: 144, frameHeight: 64, frames: 16, fps: 6, x: 220, y: 290 },
+  { src: catSheet, frameWidth: 32, frameHeight: 32, frames: 18, fps: 8, x: 544, y: 320 },
+];
+
+// Bits of the map drawn in front of the character: the two tree canopies that hang over
+// the road (each is clipped to an ellipse in CSS).
+export const FOREGROUND = [
+  { x: 326, y: 368, w: 50, h: 50 }, // round tree left of the garden gate
+  { x: 529, y: 371, w: 60, h: 59 }, // apple tree right of the gate
+];
 
 // ---- Walkable graph -------------------------------------------------------
 // Nodes sit on the cobblestone roads. The character only ever walks node to node.
@@ -26,6 +60,9 @@ export const NODES = {
 
 export type NodeId = keyof typeof NODES;
 export type Waypoint = Point & { id: NodeId; face?: Dir };
+
+// Off-map, left of the road: the character walks in from here on load.
+export const ENTRANCE: Waypoint = { id: "start", x: 200, y: 396 };
 
 const EDGES: [NodeId, NodeId][] = [
   ["monkDoor", "start"],
