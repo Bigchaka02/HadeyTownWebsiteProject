@@ -9,15 +9,24 @@ const isPage = (s: string): s is PageId => BUILDINGS.some((b) => b.id === s);
 export default function App() {
   const [page, setPage] = useState<PageId | null>(null); // dialog currently open
   const [visit, setVisit] = useState<{ id: PageId; n: number } | null>(null); // where the character should go
+  const [walkingTo, setWalkingTo] = useState<PageId | null>(null); // building the character hasn't reached yet
 
   // Send the character to a building; the page opens when it gets there.
-  const go = useCallback((id: PageId) => {
-    setPage(null);
-    setVisit((v) => ({ id, n: (v?.n ?? 0) + 1 }));
-  }, []);
+  // A repeat click on the building already being walked to is ignored instead
+  // of restarting the walk.
+  const go = useCallback(
+    (id: PageId) => {
+      if (walkingTo === id) return;
+      setPage(null);
+      setWalkingTo(id);
+      setVisit((v) => ({ id, n: (v?.n ?? 0) + 1 }));
+    },
+    [walkingTo]
+  );
 
   const open = useCallback((id: PageId) => {
     setPage(id);
+    setWalkingTo(null);
     history.replaceState(null, "", `#${id}`);
   }, []);
 
