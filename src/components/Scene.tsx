@@ -28,11 +28,14 @@ export default function Scene({ visit, onSelect, onArrive }: Props) {
   const hero = useWalker(ENTRANCE);
 
   // Fit the map into the available space (1/8 steps keep the pixels tidy).
+  // On narrow phones the natural fit can shrink hotspots and signs quite a
+  // bit, so the floor is raised there at the cost of a slightly tighter crop.
   useLayoutEffect(() => {
     const el = container.current!;
     const fit = () => {
       const s = Math.min(el.clientWidth / MAP_VIEW.w, el.clientHeight / MAP_VIEW.h);
-      setScale(Math.max(0.5, Math.floor(s * 8) / 8));
+      const floor = window.innerWidth <= 600 ? 0.65 : 0.5;
+      setScale(Math.max(floor, Math.floor(s * 8) / 8));
     };
     fit();
     const ro = new ResizeObserver(fit);
