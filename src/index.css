@@ -147,6 +147,15 @@ body {
   pointer-events: none;
 }
 
+/* Ambient day/night wash, drawn over the whole map above .world. */
+.night-tint {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  pointer-events: none;
+  transition: opacity 4s linear;
+}
+
 .map-img,
 .building-img,
 .character,

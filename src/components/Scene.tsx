@@ -3,6 +3,7 @@ import Sprite from "./Sprite";
 import Character from "./Character";
 import BuildingView from "./Building";
 import { useWalker } from "../walker";
+import { nightOpacity } from "../daylight";
 import {
   AMBIENT,
   BUILDINGS,
@@ -25,7 +26,14 @@ type Props = {
 export default function Scene({ visit, onSelect, onArrive }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [night, setNight] = useState(() => nightOpacity(new Date()));
   const hero = useWalker(ENTRANCE);
+
+  // Recheck the clock every minute so the tint keeps pace through a long visit.
+  useEffect(() => {
+    const id = setInterval(() => setNight(nightOpacity(new Date())), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   // Fit the map into the available space (1/8 steps keep the pixels tidy).
   // On narrow phones the natural fit can shrink hotspots and signs quite a
@@ -86,6 +94,7 @@ export default function Scene({ visit, onSelect, onArrive }: Props) {
             />
           ))}
         </div>
+        <div className="night-tint" style={{ opacity: night }} />
       </div>
     </div>
   );
