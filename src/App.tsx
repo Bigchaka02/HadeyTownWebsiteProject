@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Scene from "./components/Scene";
 import Dialog from "./components/Dialog";
 import { SITE } from "./content";
@@ -10,6 +10,7 @@ export default function App() {
   const [page, setPage] = useState<PageId | null>(null); // dialog currently open
   const [visit, setVisit] = useState<{ id: PageId; n: number } | null>(null); // where the character should go
   const [walkingTo, setWalkingTo] = useState<PageId | null>(null); // building the character hasn't reached yet
+  const trigger = useRef<HTMLElement | null>(null); // whatever was focused when the walk was requested
 
   // Send the character to a building; the page opens when it gets there.
   // A repeat click on the building already being walked to is ignored instead
@@ -17,6 +18,8 @@ export default function App() {
   const go = useCallback(
     (id: PageId) => {
       if (walkingTo === id) return;
+      const active = document.activeElement;
+      trigger.current = active instanceof HTMLElement && active !== document.body ? active : null;
       setPage(null);
       setWalkingTo(id);
       setVisit((v) => ({ id, n: (v?.n ?? 0) + 1 }));
@@ -33,6 +36,7 @@ export default function App() {
   const close = useCallback(() => {
     setPage(null);
     history.replaceState(null, "", location.pathname + location.search);
+    trigger.current?.focus();
   }, []);
 
   // Deep links: /#about, /#projects, /#resume (on load and whenever the hash is edited).

@@ -7,11 +7,31 @@ type Props = { page: PageId | null; onClose: () => void };
 // RPG-style window that opens once the character reaches a building.
 export default function Dialog({ page, onClose }: Props) {
   const closeButton = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!page) return;
     closeButton.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") return onClose();
+      if (e.key !== "Tab" || !dialog.current) return;
+
+      // Keep Tab from leaving the dialog while it's open.
+      const focusable = dialog.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [page, onClose]);
@@ -22,6 +42,7 @@ export default function Dialog({ page, onClose }: Props) {
   return (
     <div className="dialog-backdrop" onClick={onClose}>
       <section
+        ref={dialog}
         className="dialog"
         role="dialog"
         aria-modal="true"
