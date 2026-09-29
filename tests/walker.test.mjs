@@ -73,7 +73,12 @@ const before = w.location().pos;
 frame(5000);
 ok(dist(before, w.location().pos) <= 7.2 + 1e-9, "no teleporting after a long gap");
 
-// 6) Graph sanity: every building's door is reachable from the start node.
+// 6) The well sits off the clock tower's path: past the tower door, then up to the well.
+route = findRoute(NODES.start, ["start"], buildingById("contact").door);
+ok(route.map((p) => p.id).join(">") === "start>roadMain>roadClock>clockDoor>wellPath>well", `route to the well (${route.map((p) => p.id)})`);
+ok(route.at(-1).face === "up", "faces the well on arrival");
+
+// 7) Graph sanity: every building's door is reachable from the start node.
 for (const b of BUILDINGS) ok(findRoute(NODES.start, ["start"], b.door).length > 1, `${b.id} reachable`);
 
 console.log(`walker: ${checks} checks passed`);

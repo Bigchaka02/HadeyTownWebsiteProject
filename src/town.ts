@@ -11,7 +11,7 @@ import catSheet from "./assets/full_house_animation/PNG/cat_animation.png";
 
 export type Point = { x: number; y: number };
 export type Dir = "down" | "up" | "left" | "right";
-export type PageId = "about" | "projects" | "resume";
+export type PageId = "about" | "projects" | "resume" | "contact";
 
 // ---- Map ----------------------------------------------------------------
 export const MAP_IMAGE = mapImage;
@@ -56,6 +56,8 @@ export const NODES = {
   mainDoor:  { x: 462, y: 304, face: "up" },   // doorstep of the main house
   roadClock: { x: 608, y: 396 },               // road junction below the clock tower path
   clockDoor: { x: 608, y: 366, face: "up" },   // doorstep of the clock tower
+  wellPath:  { x: 558, y: 368 },               // grass in front of the tower, left of its door
+  well:      { x: 558, y: 322, face: "up" },   // in front of the stone well beside the tower
 } as const satisfies Record<string, Point & { face?: Dir }>;
 
 export type NodeId = keyof typeof NODES;
@@ -71,6 +73,8 @@ const EDGES: [NodeId, NodeId][] = [
   ["gate", "mainDoor"],
   ["roadMain", "roadClock"],
   ["roadClock", "clockDoor"],
+  ["clockDoor", "wellPath"],
+  ["wellPath", "well"],
 ];
 
 // ---- Buildings ------------------------------------------------------------
@@ -106,6 +110,14 @@ export const BUILDINGS: Building[] = [
     sign: { x: 609, y: 250 },
     sprite: { src: clockTower, x: 530, y: 231, size: 160 },
     hitbox: { x: 566, y: 262, w: 86, h: 98 },
+  },
+  {
+    // The stone well beside the clock tower (part of the map art itself).
+    id: "contact",
+    label: "Contact",
+    door: "well",
+    sign: { x: 530, y: 286 },
+    hitbox: { x: 546, y: 270, w: 20, h: 40 },
   },
 ];
 

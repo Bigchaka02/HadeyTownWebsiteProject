@@ -6,9 +6,10 @@ buttons in the header) and the character walks over and opens it:
 - **About Me** — the big house
 - **Projects** — the small house by the road
 - **Resume** — the clock tower
+- **Contact** — the stone well beside the clock tower
 
 Live site: https://bigchaka02.github.io/HadeyTownWebsiteProject/
-(direct links work too: `/#about`, `/#projects`, `/#resume`)
+(direct links work too: `/#about`, `/#projects`, `/#resume`, `/#contact`)
 
 ## Running it locally
 

@@ -43,7 +43,7 @@ export default function Dialog({ page, onClose }: Props) {
     <div className="dialog-backdrop" onClick={onClose}>
       <section
         ref={dialog}
-        className="dialog"
+        className={`dialog dialog-${page}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"

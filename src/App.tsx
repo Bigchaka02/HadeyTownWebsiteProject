@@ -39,7 +39,7 @@ export default function App() {
     trigger.current?.focus();
   }, []);
 
-  // Deep links: /#about, /#projects, /#resume (on load and whenever the hash is edited).
+  // Deep links: /#about, /#projects, /#resume, /#contact (on load and whenever the hash is edited).
   useEffect(() => {
     const sync = () => {
       const id = location.hash.slice(1);

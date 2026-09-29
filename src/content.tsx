@@ -1,7 +1,7 @@
 // Everything written on the site lives here. Edit freely — the map and the
 // character don't care what the pages say.
 import type { ReactNode } from "react";
-import { Ext, Tags } from "./components/bits";
+import { CopyButton, Ext, Tags } from "./components/bits";
 import type { PageId } from "./town";
 
 export const SITE = {
@@ -147,7 +147,8 @@ export const PAGES: Record<PageId, { title: string; body: ReactNode }> = {
         </ul>
 
         <p className="hint">
-          Visit the clock tower for my resume, or the little house down the road for projects.
+          Visit the clock tower for my resume, the little house down the road for projects, or the
+          well beside the tower to get in touch.
         </p>
       </>
     ),
@@ -219,6 +220,32 @@ export const PAGES: Record<PageId, { title: string; body: ReactNode }> = {
         <p className="hint">
           Want a copy? Email me at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
         </p>
+      </>
+    ),
+  },
+
+  contact: {
+    title: "Contact",
+    body: (
+      <>
+        <p className="lead">Toss a note down the well.</p>
+        <p>I’m looking for software engineering roles — say hello!</p>
+
+        <dl className="stats">
+          <div>
+            <dt>Email</dt>
+            <dd className="contact-line">
+              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+              <CopyButton text={SITE.email} label="Copy email address" />
+            </dd>
+          </div>
+          <div>
+            <dt>GitHub</dt>
+            <dd>
+              <Ext href={SITE.github}>github.com/Bigchaka02 ↗</Ext>
+            </dd>
+          </div>
+        </dl>
       </>
     ),
   },

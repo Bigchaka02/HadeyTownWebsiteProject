@@ -279,6 +279,11 @@ body {
   animation: pop 0.15s ease-out;
 }
 
+/* The contact card is short, so it opens as a narrower window. */
+.dialog-contact {
+  width: min(520px, 100%);
+}
+
 .dialog-head {
   display: flex;
   align-items: center;
@@ -472,6 +477,37 @@ body {
 }
 
 /* ---------- Small screens ---------- */
+.contact-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+.copy {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1;
+  padding: 5px 7px;
+  color: var(--ink);
+  background: var(--paper-2);
+  border: 2px solid var(--wood);
+  box-shadow: 2px 2px 0 var(--wood);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.copy:hover,
+.copy:focus-visible {
+  background: var(--paper-3);
+  outline: none;
+}
+
+.copy:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--wood);
+}
+
 @media (max-width: 640px) {
   .hud {
     padding: 10px 12px 4px;
