@@ -305,6 +305,7 @@ body {
   background: transparent;
   border: 2px solid var(--paper);
   cursor: pointer;
+  transition: background 0.12s;
 }
 
 .dialog-close:hover,
