@@ -9,27 +9,25 @@ const isPage = (s: string): s is PageId => BUILDINGS.some((b) => b.id === s);
 export default function App() {
   const [page, setPage] = useState<PageId | null>(null); // dialog currently open
   const [visit, setVisit] = useState<{ id: PageId; n: number } | null>(null); // where the character should go
-  const [walkingTo, setWalkingTo] = useState<PageId | null>(null); // building the character hasn't reached yet
+  const walkingTo = useRef<PageId | null>(null); // building the character hasn't reached yet
   const trigger = useRef<HTMLElement | null>(null); // whatever was focused when the walk was requested
 
   // Send the character to a building; the page opens when it gets there.
   // A repeat click on the building already being walked to is ignored instead
-  // of restarting the walk.
-  const go = useCallback(
-    (id: PageId) => {
-      if (walkingTo === id) return;
-      const active = document.activeElement;
-      trigger.current = active instanceof HTMLElement && active !== document.body ? active : null;
-      setPage(null);
-      setWalkingTo(id);
-      setVisit((v) => ({ id, n: (v?.n ?? 0) + 1 }));
-    },
-    [walkingTo]
-  );
+  // of restarting the walk. `go` must stay stable: the deep-link effect below
+  // re-runs (and re-reads the hash) whenever it changes.
+  const go = useCallback((id: PageId) => {
+    if (walkingTo.current === id) return;
+    const active = document.activeElement;
+    trigger.current = active instanceof HTMLElement && active !== document.body ? active : null;
+    walkingTo.current = id;
+    setPage(null);
+    setVisit((v) => ({ id, n: (v?.n ?? 0) + 1 }));
+  }, []);
 
   const open = useCallback((id: PageId) => {
+    walkingTo.current = null;
     setPage(id);
-    setWalkingTo(null);
     history.replaceState(null, "", `#${id}`);
   }, []);
 
