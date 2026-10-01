@@ -61,7 +61,7 @@ const projects: Project[] = [
   },
   {
     title: "VideoImageFun",
-    blurb: "Messing around with image and video filters, plus a bit of facial recognition.",
+    blurb: "Experiments with image and video filters, plus a little facial recognition.",
     tags: ["Python", "OpenCV"],
     link: "https://github.com/Bigchaka02/VideoImageFun",
   },
