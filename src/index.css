@@ -175,6 +175,7 @@ body {
 }
 
 .building:has(.hotspot:hover) .building-img,
+.building:has(.sign:hover) .building-img,
 .building:has(.hotspot:focus-visible) .building-img {
   filter: brightness(1.18) drop-shadow(0 0 1px rgba(255, 250, 200, 0.9));
 }
@@ -193,11 +194,14 @@ body {
   background: var(--wood);
   border: 2px solid var(--paper);
   box-shadow: 0 0 0 2px var(--wood), 2px 2px 0 2px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  pointer-events: auto; /* clicking the sign walks to its building */
   transition: background 0.15s, transform 0.15s;
 }
 
 .building:has(.hotspot:hover) .sign,
 .building:has(.hotspot:focus-visible) .sign,
+.sign:hover,
 .sign[data-active="true"] {
   background: var(--roof);
   transform: translate(-50%, -50%) scale(calc(1.15 / var(--scale, 1)));

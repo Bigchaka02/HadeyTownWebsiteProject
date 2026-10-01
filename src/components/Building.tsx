@@ -8,6 +8,8 @@ type Props = {
 
 // A building on the map: an optional image drawn over the map, an invisible button
 // covering the clickable area, and its name sign. Positions are world pixels (town.ts).
+// The sign takes clicks too (it can sit over another building's area); the button
+// is what keyboards and screen readers use.
 export default function BuildingView({ building: b, active, onClick }: Props) {
   return (
     <div className="building">
@@ -27,7 +29,7 @@ export default function BuildingView({ building: b, active, onClick }: Props) {
         style={{ left: b.hitbox.x, top: b.hitbox.y, width: b.hitbox.w, height: b.hitbox.h }}
         onClick={onClick}
       />
-      <span className="sign" data-active={active} style={{ left: b.sign.x, top: b.sign.y }}>
+      <span className="sign" data-active={active} style={{ left: b.sign.x, top: b.sign.y }} onClick={onClick}>
         {b.label}
       </span>
     </div>
